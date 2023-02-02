@@ -1,0 +1,8 @@
+/build
+/package
+/dist
+/llvm-mingw-*
+/RedPanda-CPP-*
+*.7z
+*.exe
+*.zip
