@@ -43,13 +43,6 @@ build() {
 	popd
 }
 
-generate-nsis-config() {
-	cat >"${_PKGDIR}"/config-clang.nsh <<-EOF
-		!define COMPILERNAME "Clang"
-		!define DEVCPP_VERSION "${REDPANDA_VERSION}"
-		EOF
-}
-
 7z-repack() {
 	local compiler=$1
 	7z x RedPanda.CPP.${REDPANDA_VERSION}.WoA.${compiler}.exe -o"RedPanda-CPP" -xr'!$PLUGINSDIR'
@@ -67,6 +60,12 @@ package-none() {
 }
 
 package-clang() {
+	cat >"${_PKGDIR}"/config-clang.nsh <<-EOF
+		!define COMPILERNAME "Clang"
+		!define COMPILERFOLDER "MinGW64"
+		!define DEVCPP_VERSION "${REDPANDA_VERSION}"
+		EOF
+
 	pushd "${_PKGDIR}"
 	cp "${_SRCDIR}"/platform/windows/installer-scripts/lang.nsh .
 	cp ../redpanda-woa-clang.nsi .
@@ -76,18 +75,43 @@ package-clang() {
 	popd
 }
 
+build-xross86-compiler-wrapper() {
+	for prog in $( ls MinGW32/bin/i686-w64-mingw32-*.exe | awk '{ match($0, /.*i686-w64-mingw32-(.*).exe/, m) ; print m[1] }' )
+	do
+		MinGW32/bin/aarch64-w64-mingw32-clang++ -std=c++20 -Os -DNDEBUG -DPROG=\"${prog}\" -o MinGW32/bin/${prog}.exe ../xross86.cpp
+		strip MinGW32/bin/${prog}.exe
+	done
+}
+
+package-xross86() {
+	cat >"${_PKGDIR}"/config-clang.nsh <<-EOF
+		!define COMPILERNAME "Xross86"
+		!define COMPILERFOLDER "MinGW32"
+		!define DEVCPP_VERSION "${REDPANDA_VERSION}"
+		EOF
+
+	pushd "${_PKGDIR}"
+	cp "${_SRCDIR}"/platform/windows/installer-scripts/lang.nsh .
+	cp ../redpanda-woa-clang.nsi .
+	[[ -d MinGW32 ]] || ( cp -r ../${_LLVM_MINGW_DIRECTORY} MinGW32 && build-xross86-compiler-wrapper )
+	${_NSIS} redpanda-woa-clang.nsi
+	7z-repack Xross86
+	popd
+}
+
 dist() {
 	mkdir -p "${_DISTDIR}"
-	mv "${_PKGDIR}"/*.exe "${_PKGDIR}"/*.7z "${_DISTDIR}"
+	mv "${_PKGDIR}"/RedPanda.CPP.*.exe "${_PKGDIR}"/RedPanda.CPP.*.7z "${_DISTDIR}"
 }
 
 main() {
 	prepare-llvm-mingw
 	prepare-redpanda-source
 	build
-	generate-nsis-config
 	package-none
 	package-clang
+	package-xross86
+	dist
 }
 
 main

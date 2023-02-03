@@ -3,7 +3,6 @@
 
 Unicode True
 !include "config-clang.nsh"
-!define COMPILERFOLDER "MinGW64"
 !define FINALNAME "RedPanda.CPP.${DEVCPP_VERSION}.WoA.${COMPILERNAME}.exe"
 !define DISPLAY_NAME "Red Panda C++ ${DEVCPP_VERSION}"
 
@@ -104,7 +103,7 @@ SectionEnd
 
 Section "$(SectionMinGWName)" SectionMinGW
   SectionIn 1 3
-  SetOutPath $INSTDIR\MinGW64
+  SetOutPath $INSTDIR\${COMPILERFOLDER}
 
   File /nonfatal /r "${COMPILERFOLDER}\*"
 SectionEnd
