@@ -8,6 +8,7 @@ Unicode True
 
 !include "MUI2.nsh"
 !include "lang.nsh"
+!include "x64.nsh"
 
 !define MUI_CUSTOMFUNCTION_GUIINIT myGuiInit
 
@@ -264,11 +265,18 @@ SectionEnd
 # Functions, utilities
 
 Function .onInit
+  ${If} ${IsNativeARM64}
+  ${Else}
+    MessageBox MB_OK|MB_ICONSTOP \
+      "Unsupported CPU architecture! ARM64 required."
+    Abort
+  ${EndIf}
+
   !insertmacro MUI_LANGDLL_DISPLAY
 
   IfFileExists "C:\Dev-Cpp\devcpp.exe" 0 +2
     SectionSetFlags ${SectionConfig} ${SF_SELECTED} # Remove old Dev-Cpp config files
-	
+
   IfFileExists "$APPDATA\Dev-Cpp\devcpp.cfg" 0 +2 # deprecated config file
     SectionSetFlags ${SectionConfig} ${SF_SELECTED}
 

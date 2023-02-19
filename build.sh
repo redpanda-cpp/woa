@@ -3,7 +3,7 @@
 set -xe
 
 LLVM_MINGW_VERSION="20220906"
-REDPANDA_VERSION="2.10"
+REDPANDA_VERSION="2.12"
 
 _QMAKE="/clangarm64/qt5-static/bin/qmake"
 _MAKE="mingw32-make"
