@@ -412,10 +412,7 @@ Function UninstallExisting
     ;Run the uninstaller
     uninst:
         ClearErrors
-        HideWindow
-        ClearErrors
-        ExecWait '"$R0" _?=$R1'
-        BringToFront
+        ExecWait '"$R0" /S _?=$R1'
 
     done:
 FunctionEnd
@@ -484,7 +481,7 @@ Section "Uninstall"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RedPanda-C++"
   DeleteRegKey HKLM "Software\RedPanda-C++"
 
-  IfSilent +2 ; Don't ask when running in silent mode
+  IfSilent Done ; Don't remove config in silent mode (uninstalling previous version)
   MessageBox MB_YESNO "$(MessageRemoveConfig)" IDNO Done
 
   RMDir /r "$APPDATA\RedPandaIDE"
