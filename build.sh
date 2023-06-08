@@ -2,8 +2,8 @@
 
 set -xe
 
-LLVM_MINGW_VERSION="nightly"
-REDPANDA_VERSION="2.21"
+LLVM_MINGW_VERSION="20230603"
+REDPANDA_VERSION="2.22"
 
 _QMAKE="/clangarm64/qt5-static/bin/qmake"
 _MAKE="mingw32-make"
@@ -28,7 +28,7 @@ prepare-llvm-mingw() {
 }
 
 download-redpanda-source() {
-	[[ -f ${_REDPANDA_SOURCE_ARCHIVE} ]] || curl -L -o ${_REDPANDA_SOURCE_ARCHIVE} "https://github.com/royqh1979/RedPanda-CPP/archive/refs/tags/${REDPANDA_VERSION}.zip"
+	[[ -f ${_REDPANDA_SOURCE_ARCHIVE} ]] || curl -L -o ${_REDPANDA_SOURCE_ARCHIVE} "https://github.com/royqh1979/RedPanda-CPP/archive/refs/tags/v${REDPANDA_VERSION}.zip"
 }
 
 prepare-redpanda-source() {
