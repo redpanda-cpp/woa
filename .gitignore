@@ -2,6 +2,7 @@
 /package
 /dist
 /llvm-mingw-*
+/terminal-*
 /RedPanda-CPP-*
 *.7z
 *.exe

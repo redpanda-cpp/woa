@@ -1,9 +1,10 @@
 #!/bin/bash
 
-set -xe
+set -euxo pipefail
 
-LLVM_MINGW_VERSION="20230614"
-REDPANDA_VERSION="2.24"
+LLVM_MINGW_VERSION="20231017"
+WINDOWS_TERMINAL_VERSION="1.18.2822.0"
+REDPANDA_VERSION="2.25"
 
 _QMAKE="/clangarm64/qt5-static/bin/qmake"
 _MAKE="mingw32-make"
@@ -11,6 +12,9 @@ _NSIS="/mingw32/bin/makensis"
 
 _LLVM_MINGW_DIRECTORY="llvm-mingw-${LLVM_MINGW_VERSION}-ucrt-aarch64"
 _LLVM_MINGW_ARCHIVE="${_LLVM_MINGW_DIRECTORY}.zip"
+
+_WINDOWS_TERMINAL_DIRECTORY="terminal-${WINDOWS_TERMINAL_VERSION}"
+_WINDOWS_TERMINAL_ARCHIVE="Microsoft.WindowsTerminal_${WINDOWS_TERMINAL_VERSION}_arm64.zip"
 
 _REDPANDA_SOURCE_DIRECTORY="RedPanda-CPP-${REDPANDA_VERSION}"
 _REDPANDA_SOURCE_ARCHIVE="${_REDPANDA_SOURCE_DIRECTORY}.zip"
@@ -27,6 +31,14 @@ prepare-llvm-mingw() {
 	[[ -d ${_LLVM_MINGW_DIRECTORY} ]] || ( download-llvm-mingw && 7z x ${_LLVM_MINGW_ARCHIVE} )
 }
 
+download-windows-terminal() {
+	[[ -f ${_WINDOWS_TERMINAL_ARCHIVE} ]] || curl -LO "https://github.com/microsoft/terminal/releases/download/v${WINDOWS_TERMINAL_VERSION}/${_WINDOWS_TERMINAL_ARCHIVE}"
+}
+
+prepare-openconsole() {
+	[[ -f ${_WINDOWS_TERMINAL_DIRECTORY} ]] || ( download-windows-terminal && 7z x ${_WINDOWS_TERMINAL_ARCHIVE} )
+}
+
 download-redpanda-source() {
 	[[ -f ${_REDPANDA_SOURCE_ARCHIVE} ]] || curl -L -o ${_REDPANDA_SOURCE_ARCHIVE} "https://github.com/royqh1979/RedPanda-CPP/archive/refs/tags/${REDPANDA_VERSION}.zip"
 }
@@ -41,6 +53,8 @@ build() {
 	time ${_MAKE} -j$(nproc)
 	${_MAKE} install
 	popd
+
+	cp ${_WINDOWS_TERMINAL_DIRECTORY}/OpenConsole.exe ${_PKGDIR}
 }
 
 7z-repack() {
@@ -106,6 +120,7 @@ dist() {
 
 main() {
 	prepare-llvm-mingw
+	prepare-openconsole
 	prepare-redpanda-source
 	build
 	package-none
