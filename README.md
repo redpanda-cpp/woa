@@ -1,41 +1,13 @@
-**English** [简体中文](README-CN.md)
+# [Red Panda C++](https://github.com/royqh1979/RedPanda-CPP) for Windows on Arm<br>适用于 Arm 上的 Windows 的[小熊猫 C++](https://royqh1979.gitee.io/redpandacpp/)
 
-# [Red Panda C++](https://github.com/royqh1979/RedPanda-CPP) for Windows on Arm
-
-## Distribution Packages
-
-### Compiler Type
-
-* `None`: Red Panda C++ (Arm64) without compiler.
-* `Clang`: Red Panda C++ (Arm64) with Clang (Arm64 native).
-* `Xross86`: Red Panda C++ (Arm64) with Clang (cross-compiler for x86 on Arm64).
-  - Useful if you want to share your program with friends.
-  - Clang itself is an Arm64 app, while it generates x86 binaries by default.
-  - Debugger is not available.
-
-### Installation Option
-
-* `.exe`: standard setup.
-* `.7z`: portable application.
-
-## Build
-
-Environment: MSYS2 CLANGARM64.
-
-Required packages:
-* `mingw-w64-clang-aarch64-toolchain`
-* `mingw-w64-clang-aarch64-qt5-static`
-* `mingw-w64-clang-aarch64-7zip`
-* `mingw-w64-i686-nsis`
-
-To install required packages, run:
-
-```bash
-pacman -S mingw-w64-clang-aarch64-{toolchain,qt5-static,7zip} mingw-w64-i686-nsis
-```
-
-To build, run:
-
-```bash
-./build.sh
-```
+Features / 特性:
+* Native Arm64 application and LLVM MinGW toolchain, with support for cross-compiling x86, x64 targets.<br>
+  原生 Arm64 应用程序和 LLVM MinGW 工具链，支持交叉编译 x86、x64 目标。
+* Auto detect official LLVM and add MSVC-compatible Clang.<br>
+  自动探测官方 LLVM 并添加兼容 MSVC 的 Clang。
+* UTF-8 by default.<br>
+  默认使用 UTF-8 编码。
+* Add third-party libraries to match x86/x64 edition.<br>
+  添加第三方库以匹配 x86/x64 版本。
+* Multi-user support for installer.<br>
+  安装程序支持多用户。
